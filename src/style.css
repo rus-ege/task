@@ -1,0 +1,230 @@
+body {
+    margin: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    position: absolute;
+    top: 0; bottom: 0; left: 0; right: 0;
+    background-color: white;
+    
+    font-family: Inter, sans-serif;
+}
+
+/* Блок с заданием */
+.main {
+    max-width: 860px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    margin: 0px auto;
+}
+
+.main .context {
+    font-size: 210%;
+    font-weight: 800;
+    margin: 8px;
+    text-align: center;
+}
+.main .hint {
+    margin: 16px;
+    font-size: 130%;
+    font-weight: 600;
+    color: #7F7F7F;
+    text-align: center;
+}
+/* Source */
+.main .source {
+    font-weight: 600;
+    font-size: 100%;
+    margin: 16px;
+    color: #BFBFBF;
+    text-align: center;
+}
+.main .source a {
+    color: #BFBFBF;
+    text-decoration: none;
+}
+.main .source a:hover {
+    color: #BFBFBF;
+    text-decoration: underline;
+}
+
+/* Buttons */
+.main .buttonslist {
+    margin-top: 24px;
+
+    display: flex; justify-content: center;
+    flex-wrap: wrap;
+}
+.main button {
+    margin: 4px;
+
+    font-family: inherit;
+    font-size: 150%;
+    font-weight: 600;
+
+    border: 0;
+    border-radius: 8px;
+
+    background-color: #FFC000;
+    color: white;
+
+    min-width: 256px;
+    padding: 10px 24px;
+
+    transition: background .1s;
+}
+
+.main button:hover {
+    background-color: #BF9000;
+}
+
+.main button:active {
+    transform: translateY(1px);
+}
+
+.main .showanswer {
+    background-color: #9DC3E6;
+    font-size: 130%;
+    width: 225px;
+}
+.main .showanswer:hover {
+    background-color: #2E75B6;
+}
+
+/* HEADER */
+header {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    right: 24px;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+}
+header a {
+    color: black;
+    text-decoration: none;
+    margin: 0 8px;
+    text-align: center;
+}
+header a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+header a#helplink {
+    margin-left: auto;
+    font-size: 95%;
+    font-weight: 600;
+    user-select: none;
+}
+.header-page {
+    font-size: 105%;
+    font-weight: 500;
+}
+
+/* ОБЪЯСНЕНИЕ КАЖДОГО ИЗ СЛОВ */
+.explain {
+    margin: 24px 0 12px 0;
+    width: 100%;
+    border-radius: 6px;
+    background-color: #E2F0D9;
+    display: none;
+}
+
+.explain h3 {
+    margin: 12px 16px 8px 16px;
+    font-size: 1.4em;
+}
+.explain p {
+    margin: 0 16px 12px 16px;
+    font-size: 1.05em;
+}
+
+/* Statistics */
+.statistics {
+    display: block;
+    position: fixed;
+    bottom: 48px;
+    left: 24px;
+    color: #7F7F7F;
+}
+
+/* Made by Thundiverter */
+#madebythundiverter {
+    position: absolute; bottom: 0;
+    width: 100%;
+    margin-top: 32px; padding: 12px 0px 12px 0px;
+    background-color: #1f4e79; color: #fff; font-size: 90%;
+    text-align: center;
+}
+#madebythundiverter a {
+    color: #fff; text-decoration: none;
+}
+#madebythundiverter a:hover {
+    text-decoration: underline;
+}
+
+/* Help */
+#help {
+    display: block;
+    position: fixed;
+    max-width: 720px;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 6px;
+    margin: 8px;
+}
+
+#help h2, #help p {
+    margin: 8px 16px;
+}
+#help h2:first-of-type, #help p:first-of-type {
+    margin-top: 24px;
+}
+#help h2:last-of-type, #help p:last-of-type {
+    margin-bottom: 24px;
+}
+
+/* Мобильная версия */
+@media (max-width: 540px) {
+
+    body {
+        margin: 8px;
+        position: static;
+    }
+
+    header {
+        justify-content: center;
+    }
+
+    .main {
+        margin-top: 15%;
+        margin-bottom: 16px;
+    }
+
+    .main .context {
+        font-size: 190%;
+    }
+    .main .hint {
+        font-size: 110%;
+    }
+
+    .main button {
+        font-size: 130%;
+    }
+
+    .statistics {
+        display: none;
+    }
+    /*header a#helplink {
+        display: none;
+    }*/
+}
