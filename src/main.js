@@ -1,4 +1,4 @@
-let url = 'data/paronyms.json';
+//let url = 'data/paronyms.json';
 // let ls; // localStorage (статистика)
 
 let data; // Все задания
@@ -35,7 +35,10 @@ function getData(link) {
         newTask();
 });
 }
-getData(url);
+
+// Получает задание из URL
+let locationSearch = window.location.search.replace('?','');
+getData('data/' + locationSearch + '.json');
 
 // Подчищает за прошлыми заданиями
 function clearTask() {
@@ -55,11 +58,9 @@ function newTask() {
 
     // Выбирает случайное задание
     currentTask = data[Math.floor(Math.random() * data.length)];
-    //console.log(currentTask);
 
     // Правильный ответ в отдельную переменную
     variant = currentTask.variants[0];
-    //console.log(variant);
 
     // Перемешивает варианты
     if (param.randomize) {
@@ -68,12 +69,24 @@ function newTask() {
             [currentTask.variants[i], currentTask.variants[j]] = [currentTask.variants[j], currentTask.variants[i]];
         }
     }
-    //console.log(currentTask.variants);
 
     // Заполняет элемент с текстом и советом
     TASK_TEXT.innerText = currentTask.text.replace('_', '________');
     TASK_HINT.innerText = 'Выберите правильный вариант';
     TASK_HINT.style.color = '#7F7F7F';
+
+    // Пишет, что нужно сделать
+    switch (param.type || currentTask.type) {
+        case 'choosem':
+            TASK_HINT.innerText = 'Выберите несколько правильных вариантов';
+            break;
+        case 'input':
+            TASK_HINT.innerText = 'Введите правильный ответ';
+            break;
+        default:
+            TASK_HINT.innerText = 'Выберите правильный вариант';
+            break;
+    }
     
     // Источник
     if (currentTask.source) {
@@ -100,19 +113,29 @@ function newTask() {
         TASK_SOURCE.innerHTML = 'Источник: <a href="http://os.fipi.ru/tasks/1/a">из заданий os.fipi.ru</a>';
     }
 
-    // Создаёт кнопки
-    for (let i of currentTask.variants) {
-        TASK_BUTTONSLIST.innerHTML += '<button class="answerbuttons" data-index="' + i + '">' + i + '</button>';
+    switch (param.type || currentTask.type) {
+        case 'choosem':
+            TASK_HINT.innerText = 'Выберите несколько правильных вариантов';
+            break;
+        case 'input':
+            TASK_BUTTONSLIST.innerHTML = '<input id="inputanswer" placeholder="Введите ответ">';
+            break;
+        default:
+            // Создаёт кнопки
+            for (let i of currentTask.variants) {
+                TASK_BUTTONSLIST.innerHTML += '<button class="answerbuttons" data-index="' + i + '">' + i + '</button>';
+            }
+
+            // добавление addEventListener -> click всем кнопкам
+            for (let i of document.querySelectorAll('.answerbuttons')) {
+                i.addEventListener('click', function() {
+                    checkAnswer(i.dataset.index);
+                });
+            }
+            break;
     }
 
-    // добавление addEventListener -> click всем кнопкам
-    for (let i of document.querySelectorAll('.answerbuttons')) {
-        //console.log(i);
-        i.addEventListener('click', function() {
-            checkAnswer(i.dataset.index);
-            //console.log(i.value);
-        });
-    }
+    
 }
 
 // Проверка правильности решения
@@ -125,22 +148,14 @@ function checkAnswer(answer) {
         TASK_SHOWANSWER.focus();
 
         if (answer == variant) {
-            //console.log('Правильно!');
             TASK_HINT.innerText = 'Правильно!';
-            TASK_HINT.style.color = COLOR_CORRECT;
-            //ls[0] += 1;
-            //updateStat();
         }
         else {
-            //console.log('Неправильно!');
             TASK_HINT.innerText = 'Неправильно!';
             TASK_HINT.style.color = COLOR_WRONG;
-            //ls[1] += 1;
-            //updateStat();
 
             // Выделяет неправильный ответ
             for (let i of document.querySelectorAll('.answerbuttons')) {
-                //console.log(i.dataset.index);
                 if (i.dataset.index == answer) {
                     i.style.backgroundColor = COLOR_WRONG2;
                 }
@@ -149,7 +164,6 @@ function checkAnswer(answer) {
 
         // Выделяет правильный ответ
         for (let i of document.querySelectorAll('.answerbuttons')) {
-            //console.log(i.dataset.index);
             if (i.dataset.index == variant) {
                 i.style.backgroundColor = COLOR_CORRECT;
             }
@@ -164,7 +178,6 @@ function checkAnswer(answer) {
 function idk() {
     if(!answered) {
         answered = true;
-        //console.log(variant);
         TASK_TEXT.innerHTML = TASK_TEXT.innerHTML.replace('________', '<span style="color: ' + COLOR_GRAY + '">' + variant + '</span>');
         showExplain();
     }

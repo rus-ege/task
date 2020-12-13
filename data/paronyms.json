@@ -3,7 +3,8 @@
         "param": {
             "title": "Паронимы",
             "randomize": true,
-            "explain": false
+            "explain": false,
+            "type": "choose"
         },
         "list": [
             {"text": "концертный _", "variants": ["абонемент", "абонент"]},

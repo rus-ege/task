@@ -97,6 +97,19 @@ body {
     background-color: #2E75B6;
 }
 
+.main #inputanswer {
+    margin: 4px;
+    font-family: inherit;
+    font-size: 120%;
+    font-weight: 500;
+    padding: 8px 12px;
+    
+    min-width: 280px;
+
+    border: 2px solid #FFC000;
+    border-radius: 8px;
+}
+
 /* HEADER */
 header {
     position: fixed;
