@@ -206,6 +206,13 @@ header a#helplink {
     margin-bottom: 24px;
 }
 
+#help a {
+	text-decoration: none;
+}
+#help a:hover {
+	text-decoration: underline;
+}
+
 /* Мобильная версия */
 @media (max-width: 540px) {
 
