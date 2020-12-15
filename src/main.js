@@ -149,6 +149,7 @@ function checkAnswer(answer) {
 
         if (answer == variant) {
             TASK_HINT.innerText = 'Правильно!';
+			TASK_HINT.style.color = COLOR_CORRECT;
         }
         else {
             TASK_HINT.innerText = 'Неправильно!';
