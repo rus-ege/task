@@ -1,222 +1,166 @@
-//let url = 'data/paronyms.json';
-// let ls; // localStorage (статистика)
+let data; // переменная, в которую сохраняется массив в заданиями
+let param; // переменная, в которую сохраняются параметры упражнения
+let currentTask; // переменная, в которую сохраняется текущее задание
+let answered = false;   // true - на задание дан ответ, кнопки не работают, кнопка "Продолжить"
+                        // false - на задание не дан ответ, кнопки работают, кнопка "Не знаю"
+let variants; // варианты в неперемешенном виде
 
-let data; // Все задания
-let param;
-let currentTask; // Текущее задание
-let variant; // Правильный вариант ответа
-let answered = false; // false - ответ ещё не выбран; true - ответ выбран
+/* элементы */
+const TASK_TEXT = document.querySelector('#tasktext');
+const TASK_HELP = document.querySelector('#taskhelp');
+const TASK_BUTTONSLIST = document.querySelector('#taskbuttons');
+const TASK_IDK = document.querySelector('.dontknowbtn');
+const TASK_SOURCE = document.querySelector('#tasksource');
 
-// Элементы
-const TASK_TEXT = document.querySelector('.context');
-const TASK_HINT = document.querySelector('.hint');
-const TASK_SOURCE = document.querySelector('.source');
-const TASK_BUTTONSLIST = document.querySelector('.buttonslist');
-const TASK_SHOWANSWER = document.querySelector('.showanswer');
-const TASK_EXPLAIN = document.querySelector('.explain');
-const TASK_EXPLAINP = document.querySelector('.explain p');
+const HEADER_H1 = document.querySelector('header h1');
 
-// Цвета
-const COLOR_GRAY = '#3a3a3a';
-const COLOR_CORRECT = '#70AD47';
-const COLOR_WRONG = '#ED7D31';
-const COLOR_WRONG2 = '#FF3333';
-
-// Получает все задания
+/* Получение массива */
 function getData(link) {
     fetch(link)
-    .then(response => response.json())
-    .then(commits => {
-        data = commits[0].list;
-        param = commits[0].param;
-        //console.log(param);
-        //console.log(data);
-        document.title = param.title + ' — Русский язык';
-        newTask();
-});
+        .then(response => response.json())
+        .then(commits => {
+            data = commits.data;
+            param = commits.param;
+            document.title = param.title + ' — Русский язык';
+
+            /* help */
+            document.querySelector('#helpdesc').innerText = param.desc;
+
+            /* генерация задания при запуске */
+            generateTask();
+        });
 }
+getData('data/' + window.location.search.replace('?','') + '.json');
 
-// Получает задание из URL
-let locationSearch = window.location.search.replace('?','');
-getData('data/' + locationSearch + '.json');
+/* Генерация задания */
+function generateTask() {
 
-// Подчищает за прошлыми заданиями
-function clearTask() {
-    answered = false;
-    TASK_EXPLAIN.style.display = 'none';
-    TASK_BUTTONSLIST.innerHTML = '';
+    // Сбрасывает элементы
     TASK_TEXT.innerHTML = '';
-    TASK_SHOWANSWER.innerText = 'Не знаю';
-    TASK_EXPLAIN.style.display = 'none';
-    TASK_SOURCE.innerHTML = 'Источник: ';
-}
-
-// Генерирует новое задание
-function newTask() {
-    // Вызывает функцию, которая подчищает за прошлыми заданиями
-    clearTask();
-
+    TASK_BUTTONSLIST.innerHTML = '';
+    TASK_IDK.innerHTML = 'Не знаю';
+    answered = false;
+    TASK_SOURCE.innerText = 'Источник: ';
+    HEADER_H1.innerText = param.title2;
+    
     // Выбирает случайное задание
     currentTask = data[Math.floor(Math.random() * data.length)];
-
-    // Правильный ответ в отдельную переменную
-    variant = currentTask.variants[0];
-
-    // Перемешивает варианты
-    if (param.randomize) {
-        for (let i = currentTask.variants.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [currentTask.variants[i], currentTask.variants[j]] = [currentTask.variants[j], currentTask.variants[i]];
-        }
+    if (typeof currentTask.vars == 'string') {
+        currentTask.vars = Array(currentTask.vars);
     }
-
-    // Заполняет элемент с текстом и советом
-    TASK_TEXT.innerText = currentTask.text.replace('_', '________');
-    TASK_HINT.innerText = 'Выберите правильный вариант';
-    TASK_HINT.style.color = '#7F7F7F';
-
-    // Пишет, что нужно сделать
-    switch (param.type || currentTask.type) {
-        case 'choosem':
-            TASK_HINT.innerText = 'Выберите несколько правильных вариантов';
-            break;
-        case 'input':
-            TASK_HINT.innerText = 'Введите правильный ответ';
-            break;
-        default:
-            TASK_HINT.innerText = 'Выберите правильный вариант';
-            break;
-    }
+    variants = currentTask.vars;
     
     // Источник
     if (currentTask.source) {
-        switch (currentTask.source) {
-            case "egefipi":
-                TASK_SOURCE.innerHTML += '<a href="https://fipi.ru/ege/otkrytyy-bank-zadaniy-ege">ege.fipi.ru</a>';
-                break
-            case "osfipi":
-                TASK_SOURCE.innerHTML += '<a href="http://os.fipi.ru/tasks/1/a">os.fipi.ru</a>';
-                break
-            default:
-                TASK_SOURCE.innerHTML += currentTask.source;
-                break
-        }
+        TASK_SOURCE.innerHTML += currentTask.source;
     }
     else {
-        TASK_SOURCE.innerHTML += 'не указан';
+        TASK_SOURCE.innerText = '';
     }
 
-    if (currentTask.egefipi) {
-        TASK_SOURCE.innerHTML = 'Источник: <a href="https://fipi.ru/ege/otkrytyy-bank-zadaniy-ege">из заданий ege.fipi.ru</a>';
+    if (param.randomize) {
+        for (let i = currentTask.vars.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [currentTask.vars[i], currentTask.vars[j]] = [currentTask.vars[j], currentTask.vars[i]];
+        }
     }
-    if (currentTask.osfipi) {
-        TASK_SOURCE.innerHTML = 'Источник: <a href="http://os.fipi.ru/tasks/1/a">из заданий os.fipi.ru</a>';
-    }
-
-    switch (param.type || currentTask.type) {
-        case 'choosem':
-            TASK_HINT.innerText = 'Выберите несколько правильных вариантов';
-            break;
+    
+    // Изменяет элементы
+    TASK_TEXT.innerHTML = currentTask.text.replace('_', '________').replace('/', '_');
+    
+    switch (param.type) {
         case 'input':
-            TASK_BUTTONSLIST.innerHTML = '<input id="inputanswer" placeholder="Введите ответ">';
+            // Вариант 'input': генерация поля ввода
+            TASK_HELP.innerText = 'Введите ответ';
+            TASK_BUTTONSLIST.innerHTML = '<input id="taskinput"><button id="confirmbtn" class="taskbtn" onclick="checkInput()">Сохранить</button>';
             break;
         default:
-            // Создаёт кнопки
-            for (let i of currentTask.variants) {
-                TASK_BUTTONSLIST.innerHTML += '<button class="answerbuttons" data-index="' + i + '">' + i + '</button>';
+            // Вариант 'choose': генерация кнопок
+            TASK_HELP.innerText = 'Выберите правильный ответ';
+            for (let i of currentTask.vars) {
+                TASK_BUTTONSLIST.innerHTML += '<button id="answerbtn" class="taskbtn">' + i + '</button>';
             }
-
-            // добавление addEventListener -> click всем кнопкам
-            for (let i of document.querySelectorAll('.answerbuttons')) {
-                i.addEventListener('click', function() {
-                    checkAnswer(i.dataset.index);
+            for (let j of document.querySelectorAll('#answerbtn')) {
+                j.addEventListener('click', () => {
+                    checkAnswer(j.innerText);
                 });
             }
             break;
     }
 
-    
 }
 
-// Проверка правильности решения
-function checkAnswer(answer) {
-    TASK_TEXT.innerHTML = TASK_TEXT.innerHTML.replace('________', '<span style="color: ' + COLOR_GRAY + '">' + variant + '</span>');
-
+/* Проверка задания (тип choose) */
+function checkAnswer(val) {
     if (!answered) {
         answered = true;
-        TASK_SHOWANSWER.innerText = 'Продолжить';
-        TASK_SHOWANSWER.focus();
+        TASK_IDK.innerText = 'Продолжить';
+        TASK_IDK.focus();
+        TASK_TEXT.innerHTML = TASK_TEXT.innerHTML.replace('________', '<span style="color: var(--theme-color-gray);">' + currentTask.vars[currentTask.cor] + '</span>');
+        
+        if (val == variants[currentTask.cor]) {
+            TASK_HELP.innerHTML = '<span style="color: #70ad47;">Правильно</span>';
 
-        if (answer == variant) {
-            TASK_HINT.innerText = 'Правильно!';
-			TASK_HINT.style.color = COLOR_CORRECT;
         }
         else {
-            TASK_HINT.innerText = 'Неправильно!';
-            TASK_HINT.style.color = COLOR_WRONG;
+            TASK_HELP.innerHTML = '<span style="color: #ed7d31;">Неправильно</span>';
 
             // Выделяет неправильный ответ
-            for (let i of document.querySelectorAll('.answerbuttons')) {
-                if (i.dataset.index == answer) {
-                    i.style.backgroundColor = COLOR_WRONG2;
+            for (let i of document.querySelectorAll('#answerbtn')) {
+                if ((i.innerText == val) && (val != variants[currentTask.cor])) {
+                    i.classList = 'taskbtn wrong';
                 }
             }
-        };
-
-        // Выделяет правильный ответ
-        for (let i of document.querySelectorAll('.answerbuttons')) {
-            if (i.dataset.index == variant) {
-                i.style.backgroundColor = COLOR_CORRECT;
-            }
         }
+    }
 
-        // Показывает div с объяснением
-        showExplain();
+    // Выделяет правильный ответ
+    for (let i of document.querySelectorAll('#answerbtn')) {
+        if (i.innerText == variants[currentTask.cor]) {
+            i.classList = 'taskbtn correct';
+        }
     }
 }
 
-// Кнопка "не знаю"
-function idk() {
-    if(!answered) {
+/* Проверка задания (тип input) */
+function checkInput() {
+    if (!answered) {
         answered = true;
-        TASK_TEXT.innerHTML = TASK_TEXT.innerHTML.replace('________', '<span style="color: ' + COLOR_GRAY + '">' + variant + '</span>');
-        showExplain();
-    }
-    else {
-        showExplain();
-        newTask();
+        TASK_IDK.innerText = 'Продолжить';
+        TASK_IDK.focus();
+        document.querySelector('#confirmbtn').remove();
+
+        document.querySelector('#taskinput').setAttribute('readonly', true);
+        if (document.querySelector('#taskinput').value.toLowerCase() == currentTask.vars[0].toLowerCase()) {
+            TASK_HELP.innerHTML = '<span style="color: #70ad47;">Правильно</span>';
+        }
+        else {
+            TASK_HELP.innerHTML = '<span style="color: #ed7d31;">Неправильно.</span><br/><span style="color: var(--theme-color-gray);font-size: 90%;">Правильный ответ: ' + currentTask.vars[0] + '</span>';
+        }
     }
 }
 
-// Определения слов
-function showExplain() {
-    if (param.explain) {
-        TASK_EXPLAIN.style.display = 'block';
-        TASK_EXPLAINP.innerHTML = '...';
+/* Проверка задания (для select) */
+/*
+function checkSelect() {
+    if (!answered) {
+        answered = true;
+        TASK_IDK.innerText = 'Продолжить';
+        TASK_IDK.focus();
     }
 }
+*/
 
-// Выбор вариантов ответов с помощью клавиш на клавиатуре
-document.addEventListener('keydown', document.addEventListener('keyup', function(event) {
-    if (!isNaN(Number(event.key)) && Number(event.key) != 0 && Number(event.key) <= document.querySelectorAll('.answerbuttons').length) {
-        document.querySelectorAll('.answerbuttons')[event.key - 1].focus();
-    }
-    if (event.code == 'Space' && event.code == 'Enter') {
-        TASK_SHOWANSWER.focus();
-    }
-}));
-
-// HELP
-let helpopen = false;
-let helpbox = document.querySelector('#help');
-helpbox.style.display = 'none';
-document.querySelector('#helplink').addEventListener('click', () => {
-    if (helpopen) {
-        helpbox.style.display = 'none';
+/* Кнопка "Не знаю/Продолжить" */
+function idkAnswer() {
+    if (!answered) {
+        answered = true;
+        TASK_IDK.innerText = 'Продолжить';
     }
     else {
-        helpbox.style.display = '';
+        generateTask();
+        if (param.type == 'input') {
+            document.querySelector('#taskinput').focus();
+        }
     }
-    helpopen = !helpopen;
-    console.log(helpopen);
-});
+}

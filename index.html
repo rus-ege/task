@@ -1,45 +1,52 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Паронимы</title>
-        <link rel="stylesheet" href="src/style.css">
+	<head>
+		<title>Задание</title>
+		<link rel="stylesheet" href="src/style.css">
+		<link rel="stylesheet" href="src/dialog.css">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Задания для подготовки к ЕГЭ по русскому языку">
-    </head>
+	</head>
+	
+	<body>
+		<header>
+			<a href="https://rus-ege.github.io/"><h1>title</h1></a>
+			<button onclick="openHelp()">Помощь</button>
+		</header>
+		
+		<main>
+			<section id="taskbox">
+				<p id="tasktext">Lorem ipsum dolor sit amet</p>
+				<p id="taskhelp">Выберите правильный вариант</p>
+				<div id="taskbuttons">
+					<!-- Buttons will appear here -->
+				</div>
+				<button class="taskbtn dontknowbtn" onclick="idkAnswer()">Не знаю</button>
+				<p id="tasksource">Источник: не указан</p>
+			</section>
+		</main>
 
-    <body>
-
-        <header>
-            <a id="helplink">Помощь</a>
-        </header>
-
-        <div class="main">
-            <p class="context">загрузка...</p>
-            <p class="hint">Выберите правильный вариант</p>
-            <div class="buttonslist">
-                <!--<button id="answer1">дождевая</button>
-                <button id="answer2">дождливая</button>-->
-            </div>
-            <!--<input id="inputanswer" placeholder="Введите ответ">-->
-            <button id="showanswer" class="showanswer" onclick="idk()">Не знаю</button>
-            <div class="explain">
-                <h3>Объяснение</h3>
-                <p>Lorem ipsum dolor sit amet</p>
-            </div>
-            <p class="source">Источник: </p>
-        </div>
-
-        <div id="help" class="hlp">
-            <h2>Помощь</h2>
-            <p>Вам даётся предложение, в котором пропущено одно слово. Выберите походящее слово из предложенных.</p>
-            <p>Выбрать вариант можно как с помощью мыши, так и используя клавиши цифр на клавиатуре. Для выбора варианта "Не знаю" используйте пробел. Для подтверждения выбора нажмите на пробел.</p>
-			<p>Нашли ошибку? <a href="https://github.com/rus-ege/task/issues">GitHub Issues</a></p>
-        </div>
-
-        <!-- Script -->
-        <script src="src/main.js"></script>
-    </body>
+		<div id="dialog-bg">
+			<div id="help-dialog">
+				<div id="dialog-flex">
+					<h2>Помощь</h2>
+					<button id="dialog-closebtn"><img src="src/img/closebtn.svg"></button>
+				</div>
+				<p id="helpdesc"></p>
+				<hr/>
+				<p>Нашли ошибку? <a href="https://github.com/rus-ege/task/issues">GitHub Issues</a></p>
+				<!--<hr/>
+				<h3>Настройки</h3>
+				<label><input type="checkbox"><p><b>Отключить outline</b><br/>Отключить обводку, появляющуюся при взаимодействии с интерактивными элементами.</p></label>
+				<label><input type="checkbox"><p><b>Тёмная тема</b></p></label>-->
+			</div>
+		</div>
+		
+		<!-- Scripts -->
+		<script src="src/main.js"></script>
+		<script src="src/dialog.js"></script>
+	</body>
 </html>
