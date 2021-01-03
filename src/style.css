@@ -230,8 +230,15 @@ main {
 	#taskbox {
 		margin: 0px auto;
 	}
-
+	
+	header {
+		margin-bottom: 12px;
+	}
+	
 	header h1 {
 		font-size: 1.3rem;
+	}
+	#tasktext {
+		margin-top: 16px;
 	}
 }
