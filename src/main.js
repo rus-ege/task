@@ -40,7 +40,7 @@ function generateTask() {
     TASK_BUTTONSLIST.innerHTML = '';
     TASK_IDK.innerHTML = 'Не знаю';
     answered = false;
-    TASK_SOURCE.innerText = 'Источник: ';
+    TASK_SOURCE.innerText = '';
     HEADER_H1.innerText = param.title2;
     
     // Выбирает случайное задание
@@ -52,7 +52,7 @@ function generateTask() {
     
     // Источник
     if (currentTask.source) {
-        TASK_SOURCE.innerHTML += currentTask.source;
+        TASK_SOURCE.innerHTML = 'Источник: ' + currentTask.source;
     }
     else {
         TASK_SOURCE.innerText = '';
