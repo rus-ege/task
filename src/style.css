@@ -111,6 +111,10 @@ main {
 	margin-bottom: 0;
 	text-align: center;
 }
+#tasktext.small {
+	font-size: calc(var(--theme-elem-size-text) - .5em);
+	max-width: 70%;
+}
 #taskhelp {
 	color: var(--theme-color-gray);
 	font-weight: 600;
@@ -181,11 +185,16 @@ main {
 	outline: none;
 }
 
-#tasksource {
+#tasksource,
+#tasksource a {
 	color: var(--theme-color-gray);
 	font-weight: 600;
 	font-size: calc(var(--theme-elem-size-help) - 0.15rem);
 	text-align: center;
+	text-decoration: none;
+}
+#tasksource a:hover {
+	text-decoration: underline;
 }
 
 /* кнопка "не знаю" */
@@ -240,5 +249,10 @@ main {
 	}
 	#tasktext {
 		margin-top: 16px;
+	}
+
+	#tasktext.small {
+		font-size: calc(var(--theme-elem-size-text) - .7em);
+		max-width: 90%;
 	}
 }

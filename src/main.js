@@ -21,16 +21,36 @@ function getData(link) {
         .then(commits => {
             data = commits.data;
             param = commits.param;
-            document.title = param.title + ' — Русский язык';
+            document.title = param.title /*+ ' — Русский язык'*/;
+
+            console.log(data.length);
 
             /* help */
             document.querySelector('#helpdesc').innerText = param.desc;
+
+            if (param.fontsize == 'small') {
+                TASK_TEXT.classList.add('small');
+            }
 
             /* генерация задания при запуске */
             generateTask();
         });
 }
-getData('data/' + window.location.search.replace('?','') + '.json');
+
+// get url
+let urlData = window.location.search.replace('?','');
+
+//urlData = urlData.replace(/\&/gmi, '","');
+//urlData = urlData.replace(/\=/gmi, '":"');
+
+urlData = (urlData.replace(/\&/gmi, '","')).replace(/\=/gmi, '":"');
+urlData = '{"' + urlData + '"}';
+
+urlData = JSON.parse(urlData);
+
+//console.log(urlData);
+
+getData('data/' + urlData.task + '.json');
 
 /* Генерация задания */
 function generateTask() {
@@ -51,8 +71,16 @@ function generateTask() {
     variants = currentTask.vars;
     
     // Источник
+    function returnSource() {
+        switch (currentTask.source) {
+            case 'osfipi':
+                return '<a href="http://os.fipi.ru/" target="_blank">os.fipi.ru</a>';
+            default:
+                return currentTask.source;
+        }
+    }
     if (currentTask.source) {
-        TASK_SOURCE.innerHTML = 'Источник: ' + currentTask.source;
+        TASK_SOURCE.innerHTML = 'Источник: ' + returnSource();
     }
     else {
         TASK_SOURCE.innerText = '';
@@ -71,12 +99,16 @@ function generateTask() {
     switch (param.type) {
         case 'input':
             // Вариант 'input': генерация поля ввода
-            TASK_HELP.innerText = 'Введите ответ';
+            if (!param.customhint) {
+                TASK_HELP.innerText = 'Введите ответ';
+            }
             TASK_BUTTONSLIST.innerHTML = '<input id="taskinput"><button id="confirmbtn" class="taskbtn" onclick="checkInput()">Сохранить</button>';
             break;
         default:
             // Вариант 'choose': генерация кнопок
-            TASK_HELP.innerText = 'Выберите правильный ответ';
+            if (!param.customhint) {
+                TASK_HELP.innerText = 'Выберите правильный ответ';
+            }
             for (let i of currentTask.vars) {
                 TASK_BUTTONSLIST.innerHTML += '<button id="answerbtn" class="taskbtn">' + i + '</button>';
             }
@@ -86,6 +118,12 @@ function generateTask() {
                 });
             }
             break;
+    }
+
+    // Если присутствует кастомная подсказка, то происходит вот это
+    if (param.customhint) {
+        let customhint = param.customhint;
+        TASK_HELP.innerHTML = customhint.replace('{1}', '<span style="font-weight: 800;">' + currentTask.ch + '</span>');
     }
 
 }
